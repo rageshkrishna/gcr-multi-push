@@ -1,0 +1,19 @@
+language: node_js
+
+build:
+  ci:
+    - docker build -t=gcr.io/ragesh-gcr-fizz/busybox .
+    - docker tag -f gcr.io/ragesh-gcr-fizz/busybox gcr.io/ragesh-shippable-gcr/busybox
+  post_ci:
+    - gcloud auth list
+    - gcloud auth activate ragesh@ragesh-shippable-gcr.iam.gserviceaccount.com
+    - gcloud docker push gcr.io/ragesh-shippable-gcr/busybox
+    - gcloud auth activate ragesh-gcr-fizz-svc-acct@ragesh-gcr-fizz.iam.gserviceaccount.com
+    - gcloud docker push gcr.io/ragesh-gcr-fizz/busybox
+    
+integrations:
+  hub:
+    - integrationName: ragesh-shippable-gcr
+      type: gcr
+    - integrationName: ragesh-gcr-fizz
+      type: gcr
